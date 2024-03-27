@@ -22,9 +22,8 @@ import {
 } from "@/components/ui/select";
 import { FormSchema, defaultValues } from "@/lib/schema";
 import { useFormStore } from '@/lib/store/useFormStore';
-import { Input } from './ui/input';
-import { CirclesWithBar } from 'react-loader-spinner';
 import LoadingSpinner from './LoadingSpinner';
+import { Input } from './ui/input';
 
 export function DockerForm() {
   const { setForm } = useFormStore();

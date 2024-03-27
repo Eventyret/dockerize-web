@@ -23,11 +23,12 @@ const DockerfileDisplay = () => {
   const config = useFormStore(state => state);
 
   const dockerfile = generateDockerfile(config);
+  console.log(config)
 
 
   return (
     <div className="relative">
-      <SyntaxHighlighter language="dockerfile" style={ monokai } customStyle={ { position: 'relative', borderRadius: '0.5rem' } } showLineNumbers>
+      { }<SyntaxHighlighter language="dockerfile" style={ monokai } customStyle={ { position: 'relative', borderRadius: '0.5rem' } } showLineNumbers>
         { dockerfile }
       </SyntaxHighlighter>
       <button
@@ -42,7 +43,7 @@ const DockerfileDisplay = () => {
 
       </button>
     </div>
-  );
+  )
 };
 
 export default DockerfileDisplay;

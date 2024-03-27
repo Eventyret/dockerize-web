@@ -5,6 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { monokai } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { copyToClipboard } from './DockerfileDisplay';
 import { CirclesWithBar } from 'react-loader-spinner';
+import LoadingSpinner from './LoadingSpinner';
 
 export const DockerignoreDisplay = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -27,18 +28,7 @@ backup/
   `.trim();
 
   if (!isMounted) {
-    return <CirclesWithBar
-      height="100"
-      width="100"
-      color="#4fa94d"
-      outerCircleColor="#4fa94d"
-      innerCircleColor="#4fa94d"
-      barColor="#4fa94d"
-      ariaLabel="circles-with-bar-loading"
-      wrapperStyle={ {} }
-      wrapperClass=""
-      visible={ true }
-    />;
+    return <LoadingSpinner />
   }
 
   return (
