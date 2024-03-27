@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -12,136 +12,162 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { FormSchema } from '@/lib/schema'
-import { useDockerStore } from '@/lib/store/useDockerStore'
-import useLoadingStore from '@/lib/store/useLoadingStore'
-import { useRouter } from 'next/navigation'
-import LoadingOverlay from './LoadingOverlay'
+} from "@/components/ui/select";
+import { FormSchema, defaultValues } from "@/lib/schema";
+import { useFormStore } from '@/lib/store/useFormStore';
+import { Input } from './ui/input';
+import { CirclesWithBar } from 'react-loader-spinner';
+import LoadingSpinner from './LoadingSpinner';
 
 export function DockerForm() {
-  const router = useRouter();
-  const { startLoading, stopLoading, setProgress } = useLoadingStore();
-  const { setDockerConfig, toggleFormSubmission } = useDockerStore();
+  const { setForm } = useFormStore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      nodeVersion: "20",
-      env: "development",
-      packageManager: "yarn"
-    }
+    defaultValues,
   });
 
-
-
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    setDockerConfig(data.nodeVersion, data.env, data.packageManager);
-    startLoading();
-    toggleFormSubmission()
-    router.push('/step/2')
-  };
-
-
-  const isLoading = useDockerStore((state) => state.isLoading);
-
-  return (
-    <>
-      { !isLoading ? (
-        <Form { ...form }>
-          <form onSubmit={ form.handleSubmit(onSubmit) } className="w-full p-6 h-full">
-            <div className='grid sm:grid-cols-1 md:grid-cols-2 gap-x-2'>
-              <FormField
-                control={ form.control }
-                name="nodeVersion"
-                render={ ({ field }) => (
-                  <FormItem>
-                    <FormLabel>Node Version</FormLabel>
-                    <Select onValueChange={ field.onChange } defaultValue={ field.value }>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a verified email to display" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="16">Node 16</SelectItem>
-                        <SelectItem value="18">Node 18</SelectItem>
-                        <SelectItem value="20">Node 20</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <FormMessage />
-                  </FormItem>
-                ) }
-              />
-              <FormField
-                control={ form.control }
-                name="env"
-                render={ ({ field }) => (
-                  <FormItem>
-                    <FormLabel>Node Version</FormLabel>
-                    <Select onValueChange={ field.onChange } defaultValue={ field.value }>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a verified email to display" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="development">Development</SelectItem>
-                        <SelectItem value="production">Production</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <FormMessage />
-                  </FormItem>
-                ) }
-              />
-            </div>
-            <div className='col-span-2'>
-              <FormField
-                control={ form.control }
-                name="packageManager"
-                render={ ({ field }) => (
-                  <FormItem>
-                    <FormLabel>Node Version</FormLabel>
-                    <Select onValueChange={ field.onChange } defaultValue={ field.value }>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Package Manager" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="yarn">Yarn</SelectItem>
-                        <SelectItem value="npm">Npm</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <FormMessage />
-                  </FormItem>
-                ) }
-              />
-
-            </div>
-
-            <Button type="submit">Submit</Button>
-
-          </form>
-
-        </Form>
-      ) : (
-        (
-          <LoadingOverlay />
-        )
-      )
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name) {
+        // Ensuring 'name' is not undefined
+        const newValue = { [name]: value[name] };
+        setForm(newValue as Partial<z.infer<typeof FormSchema>>);
       }
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch, setForm, form]);
+
+  if (!isMounted) {
+    return <LoadingSpinner />;
+  }
+  return (
+    <Form { ...form }>
+      <form className="w-full p-6 h-full">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-x-2">
+          {/* Node Version */ }
+          <FormField
+            control={ form.control }
+            name="nodeVersion"
+            render={ ({ field }) => (
+              <FormItem>
+                <FormLabel>Node Version</FormLabel>
+                <Select onValueChange={ field.onChange } defaultValue={ field.value }>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Node Version" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="16">Node 16</SelectItem>
+                    <SelectItem value="18">Node 18</SelectItem>
+                    <SelectItem value="20">Node 20</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            ) }
+          />
+          {/* Environment */ }
+          <FormField
+            control={ form.control }
+            name="env"
+            render={ ({ field }) => (
+              <FormItem>
+                <FormLabel>Environment</FormLabel>
+                <Select onValueChange={ field.onChange } defaultValue={ field.value }>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Environment" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="development">Development</SelectItem>
+                    <SelectItem value="production">Production</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            ) }
+          />
 
 
-    </>
-  )
+          {/* Package Manager */ }
+          <FormField
+            control={ form.control }
+            name="packageManager"
+            render={ ({ field }) => (
+              <FormItem>
+                <FormLabel>Package Manager</FormLabel>
+                <Select onValueChange={ field.onChange } defaultValue={ field.value }>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Package Manager" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="yarn">Yarn</SelectItem>
+                    <SelectItem value="npm">Npm</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            ) }
+          />
+          <FormField
+            control={ form.control }
+            name="projectName"
+            render={ ({ field }) => (
+              <FormItem>
+                <FormLabel>Project Name</FormLabel>
+                <FormControl>
+                  <Input  { ...field } />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            ) }
+          />
+          <FormField
+            control={ form.control }
+            name="user"
+            render={ ({ field }) => (
+              <FormItem>
+                <FormLabel>Node User</FormLabel>
+                <FormControl>
+                  <Input  { ...field } />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            ) }
+          />
+          <FormField
+            control={ form.control }
+            name="port"
+            render={ ({ field }) => (
+              <FormItem>
+                <FormLabel>Port</FormLabel>
+                <FormControl>
+                  <Input  { ...field } />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            ) }
+          />
+        </div>
+      </form>
+    </Form >
+  );
 }

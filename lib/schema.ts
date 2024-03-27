@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getRandomName } from "./random-app-name";
 
 export const FormSchema = z.object({
   nodeVersion: z.string().default("18"),
@@ -24,6 +25,7 @@ export const FormSchema = z.object({
   productionStagePackages: z.string().default("vips-dev"),
   user: z.string().default("node"),
   port: z.string().default("1337"),
+  projectName: z.string().default(getRandomName()),
 });
 
 export const nodeVersionOptions = ["16", "18", "20"];

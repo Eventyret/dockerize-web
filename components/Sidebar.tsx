@@ -13,7 +13,7 @@ const steps = [
 
 export const Sidebar = () => (
   <div className="hidden min-h-0 md:flex flex-col w-64 border-r border-gray-100  dark:border-gray-800">
-    <nav className="flex-1 overflow-y-auto">
+    <nav className="flex-1">
       <div className="grid gap-1.5 justify-center h-full">
         <Link
           className="flex h-10 items-center justify-center px-4 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
