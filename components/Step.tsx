@@ -11,7 +11,7 @@ interface StepProps {
 
 const Step: React.FC<StepProps> = ({ number, title, description, Icon, children }) => {
   return (
-    <div className="flex flex-wrap -m-2">
+    <div className="flex flex-wrap mt-2">
       <div className="w-auto p-2">
         <div className="flex flex-col items-center justify-between h-full">
           <div className="block pb-4">

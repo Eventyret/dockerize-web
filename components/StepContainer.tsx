@@ -4,9 +4,9 @@ import { BuildInstructions } from './BuildInstructions';
 import { DockerForm } from './DockerForm';
 import { DockerignoreDisplay } from './DockerIgnore';
 import DockerfileDisplay from './DockerfileDisplay';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Step from './Step';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from './ui/button';
 
 
@@ -36,8 +36,19 @@ const steps = [
 
 const StepsContainer = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [animationCompleted, setAnimationCompleted] = useState(false);
+
+  useEffect(() => {
+    if (animationCompleted) {
+      containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      setAnimationCompleted(false); // Reset the flag
+    }
+  }, [animationCompleted]);
 
   const handleNext = () => {
+    // Assuming you want to animate the entry of a new step:
+    setAnimationCompleted(false); // Reset before starting a new animation
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -57,30 +68,28 @@ const StepsContainer = () => {
   };
 
   return (
-    <section className="py-4">
+    <section className="py-4" ref={ containerRef }>
       <div className="container px-4 mx-auto">
-        { steps.slice(0, currentStep + 1).map((step, index) => (
-          <motion.div
-            key={ index }
-            variants={ stepAnimation }
-            initial={ index > 0 ? "hidden" : "show" } // Skip animation for the first step
-            animate="show"
-            exit="hidden"
-            style={ {
-              originY: 1, // Animate from bottom to top
-              overflow: 'hidden',
-              ...(index > 0 ? {} : { scaleY: 1 }) // Ensure the first step does not start scaled
-            } }
-          >
-            <Step
-              number={ (index + 1).toString() }
-              title={ step.title }
-              description={ step.description }
+        <AnimatePresence>
+          { steps.slice(0, currentStep + 1).map((step, index) => (
+            <motion.div
+              key={ index }
+              initial={ { opacity: 0 } }
+              animate={ { opacity: 1 } }
+              exit={ { opacity: 0 } }
+              transition={ { duration: 0.5 } }
+              onAnimationComplete={ () => setAnimationCompleted(true) }
             >
-              { step.content }
-            </Step>
-          </motion.div>
-        )) }
+              <Step
+                number={ (index + 1).toString() }
+                title={ step.title }
+                description={ step.description }
+              >
+                { step.content }
+              </Step>
+            </motion.div>
+          )) }
+        </AnimatePresence>
         <div className="mt-4 flex justify-end">
           <Button
             onClick={ handleNext }

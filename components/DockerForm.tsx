@@ -52,6 +52,13 @@ export function DockerForm() {
   if (!isMounted) {
     return <LoadingSpinner />;
   }
+
+  TODO:
+  // Add component to add custom build arguments of variables
+  // Add a text area to paste in a .env file
+  // Add a button to add a new environment variable
+  // Add a button to remove an environment variable
+  // Add a docker-compose file generator
   return (
     <Form { ...form }>
       <form className="w-full p-6 h-full">
