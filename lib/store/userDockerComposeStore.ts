@@ -3,7 +3,7 @@ import { defaultDockerComposeValues } from "../schema";
 
 export interface DockerComposeFormState {
   projectName: string;
-  database: "sqlite" | "mariadb" | "mysql" | "postgres";
+  database: "mariadb" | "mysql" | "postgres";
   databaseUser: string;
   databasePassword: string;
   databasePort: string;

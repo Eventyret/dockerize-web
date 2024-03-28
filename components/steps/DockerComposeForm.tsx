@@ -90,7 +90,6 @@ export function DockerComposeForm({ show }: DockerComposeFormProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="sqlite">SQlite</SelectItem>
                         <SelectItem value="mariadb">MariaDB</SelectItem>
                         <SelectItem value="mysql">MySQL</SelectItem>
                         <SelectItem value="postgres">Postgres</SelectItem>

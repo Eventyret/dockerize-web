@@ -25,16 +25,16 @@ const StepsContainer = () => {
     {
       title: "Configuration",
       description: "Let's configure your Dockerfile",
-      extraOptions: (
+      extraOptions: currentStep === 0 ? (
         <div className="flex items-center space-x-2">
           <Switch id="docker-compose-view" onCheckedChange={ (checked) => setShowComposeConfig(checked) } />
           <Label htmlFor="docker-compose-view">Enable Docker Compose</Label>
         </div>
-      ),
+      ) : undefined,
       content: (
         <div className='flex flex-col items-center space-y-4'>
           <DockerForm />
-          <DockerComposeForm show={ showComposeConfig } />
+          { showComposeConfig && <DockerComposeForm show={ showComposeConfig } /> }
         </div>
       ),
     },
@@ -86,6 +86,12 @@ const StepsContainer = () => {
     }
   };
 
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   if (!isMounted) {
     return <LoadingOverlay />;
   }
@@ -114,7 +120,10 @@ const StepsContainer = () => {
             </motion.div>
           )) }
         </AnimatePresence>
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex justify-between">
+          { <Button onClick={ handlePrevious } disabled={ currentStep === 0 }>
+            Previous
+          </Button> }
           <Button onClick={ handleNext }>
             { currentStep === steps.length - 1 ? "Finish" : "Next" }
           </Button>
