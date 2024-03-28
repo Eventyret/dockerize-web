@@ -1,13 +1,13 @@
 "use client"
-import { useFormStore } from '@/lib/store/useFormStore';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { BuildInstructions } from './BuildInstructions';
 import { DockerForm } from './DockerForm';
 import { DockerignoreDisplay } from './DockerIgnore';
 import DockerfileDisplay from './DockerfileDisplay';
-import { AnimatePresence, motion } from 'framer-motion';
 import Step from './Step';
-import { useEffect, useRef, useState } from 'react';
 import { Button } from './ui/button';
+import LoadingSpinner from './LoadingSpinner';
 
 
 
@@ -38,6 +38,12 @@ const StepsContainer = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [animationCompleted, setAnimationCompleted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
 
   useEffect(() => {
     if (animationCompleted) {
@@ -47,8 +53,7 @@ const StepsContainer = () => {
   }, [animationCompleted]);
 
   const handleNext = () => {
-    // Assuming you want to animate the entry of a new step:
-    setAnimationCompleted(false); // Reset before starting a new animation
+    setAnimationCompleted(false);
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -56,16 +61,10 @@ const StepsContainer = () => {
     }
   };
 
-  // Bottom to top animation for steps, skipping the first step
-  const stepAnimation = {
-    hidden: { scaleY: 0 },
-    show: {
-      scaleY: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
+  if (!isMounted) {
+    return <LoadingSpinner />;
+  }
+
 
   return (
     <section className="py-4" ref={ containerRef }>

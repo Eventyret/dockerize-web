@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -22,16 +22,10 @@ import {
 } from "@/components/ui/select";
 import { FormSchema, defaultValues } from "@/lib/schema";
 import { useFormStore } from '@/lib/store/useFormStore';
-import LoadingSpinner from './LoadingSpinner';
 import { Input } from './ui/input';
 
 export function DockerForm() {
   const { setForm } = useFormStore();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -41,7 +35,6 @@ export function DockerForm() {
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name) {
-        // Ensuring 'name' is not undefined
         const newValue = { [name]: value[name] };
         setForm(newValue as Partial<z.infer<typeof FormSchema>>);
       }
@@ -49,9 +42,7 @@ export function DockerForm() {
     return () => subscription.unsubscribe();
   }, [form.watch, setForm, form]);
 
-  if (!isMounted) {
-    return <LoadingSpinner />;
-  }
+
 
   TODO:
   // Add component to add custom build arguments of variables
