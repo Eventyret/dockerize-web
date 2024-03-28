@@ -12,6 +12,8 @@ import { Button } from './ui/button';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { BuildInstructions } from './steps/BuildInstructions';
+import EnvFileDisplayComponent from './steps/EnvFileDisplayComponent';
+import { RunInstructions } from './steps/RunInstructions';
 
 const StepsContainer = () => {
   const [showComposeConfig, setShowComposeConfig] = useState(false);
@@ -56,6 +58,12 @@ const StepsContainer = () => {
       description: "Here is your Docker Compose configuration",
       content: <DockerComposeFileDisplay />,
     });
+    steps.push({
+      title: "Replacing your .env file",
+      description: "File is located at the root of your project",
+      content: <EnvFileDisplayComponent />,
+
+    })
   }
 
   steps.push({
@@ -64,6 +72,12 @@ const StepsContainer = () => {
       ? "Use the following command to start Docker Compose"
       : "Build your Docker image using the following instructions",
     content: <BuildInstructions composeCommand={ showComposeConfig } />,
+  });
+
+  steps.push({
+    title: "Running Your Docker Container",
+    description: "Use the following command to run your Docker container",
+    content: <RunInstructions />,
   });
 
   useEffect(() => {
