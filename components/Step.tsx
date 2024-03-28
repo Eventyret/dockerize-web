@@ -1,15 +1,16 @@
 import { LucideIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 
-interface StepProps {
+export interface StepProps {
   number: string;
   title: string;
   description?: string;
   Icon?: React.ElementType;
   children?: ReactNode;
+  extraOptions?: ReactNode
 }
 
-const Step: React.FC<StepProps> = ({ number, title, description, Icon, children }) => {
+const Step: React.FC<StepProps> = ({ number, title, description, Icon, children, extraOptions }) => {
   return (
     <div className="flex flex-wrap mt-2">
       <div className="w-auto p-2">
@@ -25,6 +26,7 @@ const Step: React.FC<StepProps> = ({ number, title, description, Icon, children 
       <div className="flex-1 p-2">
         <h3 className="font-heading mb-0.5 text-lg font-semibold">{ title }</h3>
         { description && <p className="mb-7 text-neutral-500">{ description }</p> }
+        { extraOptions ?? null }
         { children }
       </div>
     </div>

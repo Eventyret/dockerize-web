@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { GiSpermWhale } from "react-icons/gi";
 import { FaGithub } from "react-icons/fa";
+import { ThemeToggle } from './theme-toggle';
 
 
 function Navbar() {
@@ -17,13 +18,10 @@ function Navbar() {
         <span>Strapi Dockerize Tool</span>
       </Link>
       <div className="ml-auto flex items-center pr-4 md:pr-6">
-        <Button className="mr-4">
+        <Button variant={ "outline" } className="mr-4">
           <FaGithub className="h-6 w-6" />
         </Button>
-        <Button>
-          <SunIcon className="h-6 w-6" />
-          <MoonIcon className="h-6 w-6" />
-        </Button>
+        <ThemeToggle />
       </div>
     </header>
   );

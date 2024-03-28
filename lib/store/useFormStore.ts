@@ -1,10 +1,9 @@
 import { create } from "zustand";
-import { defaultValues } from "@/lib/schema";
+import { defaultDockerFormValues } from "@/lib/schema";
 
 export interface DockerFormState {
   nodeVersion: string;
   env: string;
-  database: string;
   packageManager: string;
   buildStagePackages: string;
   productionStagePackages: string;
@@ -15,6 +14,6 @@ export interface DockerFormState {
 }
 
 export const useFormStore = create<DockerFormState>((set) => ({
-  ...defaultValues,
+  ...defaultDockerFormValues,
   setForm: (form) => set((state) => ({ ...state, ...form })),
 }));

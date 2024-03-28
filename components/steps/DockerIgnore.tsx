@@ -1,6 +1,6 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { monokai } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { CopyButton } from './CopyButton';
+import { CopyButton } from '../CopyButton';
 
 export const DockerignoreDisplay = () => {
 

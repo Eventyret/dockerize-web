@@ -1,10 +1,15 @@
-import { FormSchema } from '@/lib/schema';
-import { DockerFormState } from '@/lib/store/useFormStore';
-import { z } from 'zod';
-
+import { DockerFormState } from "@/lib/store/useFormStore";
 
 export const generateDockerfile = (config: DockerFormState): string => {
-  const { nodeVersion, env, packageManager, buildStagePackages, productionStagePackages, user, port } = config;
+  const {
+    nodeVersion,
+    env,
+    packageManager,
+    buildStagePackages,
+    productionStagePackages,
+    user,
+    port,
+  } = config;
 
   const baseCommands = `FROM node:${nodeVersion}-alpine
 # Installing libvips-dev for sharp Compatibility
@@ -13,13 +18,19 @@ ARG NODE_ENV=${env}
 ENV NODE_ENV=\${NODE_ENV}
 WORKDIR /opt/
 COPY package.json yarn.lock ./
-RUN ${packageManager === "yarn" ? "yarn global add node-gyp" : "npm install -g node-gyp"}
-RUN ${packageManager} config set network-timeout 600000 -g && ${packageManager} install${env === "production" ? " --production" : ""}
+RUN ${
+    packageManager === "yarn"
+      ? "yarn global add node-gyp"
+      : "npm install -g node-gyp"
+  }
+RUN ${packageManager} config set network-timeout 600000 -g && ${packageManager} install${
+    env === "production" ? " --production" : ""
+  }
 ENV PATH /opt/node_modules/.bin:\$PATH
 WORKDIR /opt/app
 COPY . .
-RUN chown -R ${user || 'node'}:${user || 'node'} /opt/app
-USER ${user || 'node'}`;
+RUN chown -R ${user || "node"}:${user || "node"} /opt/app
+USER ${user || "node"}`;
 
   const devCommands = `
 RUN [${packageManager === "yarn" ? "yarn build" : "npm run build"}]
@@ -34,7 +45,7 @@ FROM node:${nodeVersion}-alpine
 RUN apk add --no-cache vips-dev
 COPY --from=build /opt/node_modules ./node_modules
 COPY --from=build /opt/app ./
-RUN chown -R ${user || 'node'}:${user || 'node'} /opt/app
+RUN chown -R ${user || "node"}:${user || "node"} /opt/app
 EXPOSE ${port || 1337}
 CMD ["${packageManager}", "start"]`;
 

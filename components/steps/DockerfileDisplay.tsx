@@ -2,8 +2,8 @@
 import { useFormStore } from '@/lib/store/useFormStore';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { monokai } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { CopyButton } from './CopyButton';
-import { generateDockerfile } from './generateDockerfile';
+import { CopyButton } from '../CopyButton';
+import { generateDockerfile } from '../../lib/generateDockerfile';
 
 
 const DockerfileDisplay = () => {

@@ -20,23 +20,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormSchema, defaultValues } from "@/lib/schema";
+import { defaultDockerFormValues, dockerFormSchema } from "@/lib/schema";
 import { useFormStore } from '@/lib/store/useFormStore';
-import { Input } from './ui/input';
+import { Input } from '../ui/input';
 
 export function DockerForm() {
   const { setForm } = useFormStore();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues,
+  const form = useForm<z.infer<typeof dockerFormSchema>>({
+    resolver: zodResolver(dockerFormSchema),
+    defaultValues: defaultDockerFormValues
   });
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name) {
         const newValue = { [name]: value[name] };
-        setForm(newValue as Partial<z.infer<typeof FormSchema>>);
+        setForm(newValue as Partial<z.infer<typeof dockerFormSchema>>);
       }
     });
     return () => subscription.unsubscribe();
@@ -123,20 +123,7 @@ export function DockerForm() {
               </FormItem>
             ) }
           />
-          <FormField
-            control={ form.control }
-            name="projectName"
-            render={ ({ field }) => (
-              <FormItem>
-                <FormLabel>Project Name</FormLabel>
-                <FormControl>
-                  <Input  { ...field } />
-                </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            ) }
-          />
           <FormField
             control={ form.control }
             name="user"

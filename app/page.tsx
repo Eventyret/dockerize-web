@@ -1,4 +1,3 @@
-import { Sidebar } from '@/components/Sidebar'
 import StepsContainer from '@/components/StepContainer'
 
 export default function Home() {

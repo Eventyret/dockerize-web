@@ -1,12 +1,9 @@
 import { z } from "zod";
 import { getRandomName } from "./random-app-name";
 
-export const FormSchema = z.object({
+export const dockerFormSchema = z.object({
   nodeVersion: z.string().default("18"),
   env: z.enum(["development", "production"]).default("development"),
-  database: z
-    .enum(["sqlite", "mariadb", "mysql", "postgres"])
-    .default("postgres"),
   packageManager: z.enum(["npm", "yarn"]).default("yarn"),
   buildStagePackages: z
     .string()
@@ -28,6 +25,21 @@ export const FormSchema = z.object({
   projectName: z.string().default(getRandomName()),
 });
 
+export const dockerComposeFormSchema = z.object({
+  projectName: z.string().default(getRandomName()),
+  database: z.enum(["mariadb", "mysql", "postgres"]).default("postgres"),
+  databaseUser: z.string().default("strapi"),
+  databasePassword: z.string().default("strapi"),
+  databasePort: z.string().default(() => {
+    return {
+      mariadb: "3306",
+      mysql: "3306",
+      postgres: "5432",
+    }["postgres"];
+  }),
+});
+
 export const nodeVersionOptions = ["16", "18", "20"];
 
-export const defaultValues = FormSchema.parse({});
+export const defaultDockerFormValues = dockerFormSchema.parse({});
+export const defaultDockerComposeValues = dockerComposeFormSchema.parse({});
