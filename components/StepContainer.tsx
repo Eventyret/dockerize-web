@@ -1,22 +1,25 @@
 "use client"
-import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import Step from './Step';
-import { DockerForm } from './steps/DockerForm';
-import { DockerComposeForm } from './steps/DockerComposeForm';
-import DockerfileDisplay from './steps/DockerfileDisplay';
-import { DockerignoreDisplay } from './steps/DockerIgnore';
-import DockerComposeFileDisplay from './steps/DockerComposeDisplay';
+import { useEffect, useRef, useState } from 'react';
 import LoadingOverlay from './LoadingOverlay';
-import { Button } from './ui/button';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
+import Step from './Step';
 import { BuildInstructions } from './steps/BuildInstructions';
+import DockerComposeFileDisplay from './steps/DockerComposeDisplay';
+import { DockerComposeForm } from './steps/DockerComposeForm';
+import { DockerForm } from './steps/DockerForm';
+import { DockerignoreDisplay } from './steps/DockerIgnore';
+import DockerfileDisplay from './steps/DockerfileDisplay';
 import EnvFileDisplayComponent from './steps/EnvFileDisplayComponent';
 import { RunInstructions } from './steps/RunInstructions';
+import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Label } from './ui/label';
+import { Switch } from './ui/switch';
+
 
 const StepsContainer = () => {
   const [showComposeConfig, setShowComposeConfig] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [animationCompleted, setAnimationCompleted] = useState(false);
@@ -92,11 +95,10 @@ const StepsContainer = () => {
   }, [animationCompleted]);
 
   const handleNext = () => {
-    setAnimationCompleted(false);
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      alert('You have completed all the steps!');
+      setDialogVisible(true);
     }
   };
 
@@ -105,6 +107,12 @@ const StepsContainer = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  const handleReset = () => {
+    setCurrentStep(0);
+    setDialogVisible(false);
+  };
+
 
   if (!isMounted) {
     return <LoadingOverlay />;
@@ -135,15 +143,50 @@ const StepsContainer = () => {
           )) }
         </AnimatePresence>
         <div className="mt-4 flex justify-between">
-          { <Button onClick={ handlePrevious } disabled={ currentStep === 0 }>
+          <Button onClick={ handlePrevious } disabled={ currentStep === 0 }>
             Previous
-          </Button> }
-          <Button onClick={ handleNext }>
-            { currentStep === steps.length - 1 ? "Finish" : "Next" }
           </Button>
-        </div>
-      </div>
-    </section>
+          {/* Conditional rendering of DialogTrigger based on whether it's the last step */ }
+          { currentStep === steps.length - 1 ? (
+            <Dialog open={ dialogVisible }  >
+              <DialogTrigger asChild>
+                <Button onClick={ () => setDialogVisible(true) }>Finish</Button>
+              </DialogTrigger>
+              <DialogContent className='fixed left-[50%] top-[50%] z-50 grid w-full max-w-2xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg'>
+                <DialogHeader>
+                  <DialogTitle className='font-semibold text-center'>You&apos;ve just Strapi-fied your project! 🎉</DialogTitle>
+
+                  <DialogDescription className="text-center p-4 flex flex-col -base md:text-lg mx-auto">
+                    <img src="https://c.tenor.com/nid30V-4hk0AAAAC/tenor.gif" alt="Confetti" className="w-full h-auto" />
+                    <span className='my-2'>🐳 Looks like Docker isn&apos;t just for shipping containers anymore. Welcome to the club of elite chefs serving gourmet code dishes in containerized fashion.</span>
+                    <br />
+                    <span>🔧 With a few clicks and a dash of copy-pasta, you&apos;ve bolted a Strapi engine onto your Docker ship. Sailing towards API paradise, aren&apos;t we? </span>
+                    <br />
+                    <span>👨‍💻 Sharing is caring, but let&apos;s be honest, showing off is even better. Got your GitHub portfolio ready to dazzle the coding paparazzi? 🌟</span>
+                    <br />
+                    <span>Remember, it&apos;s not just about making it work; it&apos;s about making it work with flair, a sprinkle of sarcasm, and maybe a Docker whale or two for good company. 😉</span>
+                    <br />
+                    <span className="font-medium">Liked zipping through the high seas of code with our Strapi-Docker compass? Throw us a ⭐ on GitHub. It fuels our ship and keeps the sarcasm brewing! 😄</span>
+                    <br />
+                    <a href="https://github.com/eventyret/dockerize-web" target="_blank" rel="noopener noreferrer" className="inline-block bg-primary text-white font-bold py-2 px-4 rounded mt-4">
+                      ⭐️ Star us on GitHub & Make Our Day!
+                    </a>
+                  </DialogDescription>
+                </DialogHeader>
+                <Button onClick={ handleReset }>Restart</Button>
+              </DialogContent>
+            </Dialog>
+
+          ) : (
+            <Button onClick={ handleNext }>
+              Next
+            </Button>
+          )
+          }
+        </div >
+
+      </div >
+    </section >
   );
 };
 
