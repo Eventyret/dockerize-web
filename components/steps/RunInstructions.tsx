@@ -7,7 +7,7 @@ import { useFormStore } from '@/lib/store/useFormStore';
 export const RunInstructions = () => {
   const { projectName, port } = useFormStore();
   const projectNameOrDefault = projectName || 'mystrapiapp';
-  const runCommand = `docker run -p ${port}:${port} ${projectNameOrDefault}:latest`;
+  const runCommand = `docker run -p ${port}:${port} --env-file=.env ${projectNameOrDefault}:latest`;
 
   return (
     <div className='relative'>

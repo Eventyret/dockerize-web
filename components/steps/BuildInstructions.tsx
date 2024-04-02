@@ -14,7 +14,6 @@ export const BuildInstructions = ({ composeCommand }: BuildInstructionsProps) =>
   const buildCommandParts = [
     'docker build',
     ...(buildArg ? [buildArg] : []),
-    '--env-file .env',
     `-t ${projectName || 'mystrapiapp'}:latest`,
     `-f Dockerfile${env === 'production' ? '.prod' : ''}`,
     '.'
